@@ -139,6 +139,7 @@ glm::mat4 modelMatrixCyborg = glm::mat4(1.0f);
 glm::mat4 modelMatrixTitan = glm::mat4(1.0f);
 
 int animationMayowIndex = 1;
+int animationTitanIndex = 0;
 float rotDartHead = 0.0, rotDartLeftArm = 0.0, rotDartLeftHand = 0.0, rotDartRightArm = 0.0, rotDartRightHand = 0.0, rotDartLeftLeg = 0.0, rotDartRightLeg = 0.0;
 float rotBuzzHead = 0.0, rotBuzzLeftarm = 0.0, rotBuzzLeftForeArm = 0.0, rotBuzzLeftHand = 0.0;
 int modelSelected = 0;
@@ -367,7 +368,7 @@ void init(int width, int height, std::string strTitle, bool bFullScreen) {
 	cyborgModelAnimate.setShader(&shaderMulLighting);
 
 	// Titan
-	titanModelAnimate.loadModel("../models/Titan/titan2.fbx");
+	titanModelAnimate.loadModel("../models/Titan/titan.fbx");
 	titanModelAnimate.setShader(&shaderMulLighting);
 
 	camera->setPosition(glm::vec3(0.0, 3.0, 4.0));
@@ -663,7 +664,7 @@ bool processInput(bool continueApplication) {
 	if (enableCountSelected && glfwGetKey(window, GLFW_KEY_TAB) == GLFW_PRESS){
 		enableCountSelected = false;
 		modelSelected++;
-		if(modelSelected > 4)
+		if(modelSelected > 5)
 			modelSelected = 0;
 		if(modelSelected == 1)
 			fileName = "../animaciones/animation_dart_joints.txt";
@@ -806,6 +807,23 @@ bool processInput(bool continueApplication) {
 	else if (modelSelected == 0 && glfwGetKey(window, GLFW_KEY_DOWN) == GLFW_PRESS){
 		modelMatrixMayow = glm::translate(modelMatrixMayow, glm::vec3(0.0, 0.0, -0.02));
 		animationMayowIndex = 0;
+	}
+
+	// Controles de Titan
+	if (modelSelected == 5 && glfwGetKey(window, GLFW_KEY_LEFT) == GLFW_PRESS){
+		modelMatrixTitan = glm::rotate(modelMatrixTitan, 0.05f, glm::vec3(0, 1, 0));
+		animationTitanIndex = 0;
+	} else if (modelSelected == 5 && glfwGetKey(window, GLFW_KEY_RIGHT) == GLFW_PRESS){
+		modelMatrixTitan = glm::rotate(modelMatrixTitan, -0.05f, glm::vec3(0, 1, 0));
+		animationTitanIndex = 0;
+	}
+	if (modelSelected == 5 && glfwGetKey(window, GLFW_KEY_UP) == GLFW_PRESS){
+		modelMatrixTitan = glm::translate(modelMatrixTitan, glm::vec3(0.0, 0.0, 0.3));
+		animationTitanIndex = 0;
+	}
+	else if (modelSelected == 5 && glfwGetKey(window, GLFW_KEY_DOWN) == GLFW_PRESS){
+		modelMatrixTitan = glm::translate(modelMatrixTitan, glm::vec3(0.0, 0.0, -0.2));
+		animationTitanIndex = 0;
 	}
 
 	glfwPollEvents();
@@ -1096,8 +1114,9 @@ void applicationLoop() {
 
 		glm::mat4 modelMatrixTitanBody = glm::mat4(modelMatrixTitan);
 		modelMatrixTitanBody = glm::scale(modelMatrixTitanBody, glm::vec3(0.009f));
-		titanModelAnimate.setAnimationIndex(0);
+		titanModelAnimate.setAnimationIndex(animationTitanIndex);
 		titanModelAnimate.render(modelMatrixTitanBody);
+		animationTitanIndex = 0;
 
 		/*******************************************
 		 * Skybox
